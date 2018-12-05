@@ -1,10 +1,9 @@
 #include<iostream>
-#include<cmath>
 #include<stack>
 using namespace std;
 
 bool isprime(int a){
-    for(int i=2;i<=sqrt(a);i++){
+    for(int i=2;i*i<=a;i++){
         if(a%i==0) return false;
     }
     return true;
