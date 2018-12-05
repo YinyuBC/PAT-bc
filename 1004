@@ -1,0 +1,23 @@
+#include<iostream>
+#include<algorithm>
+using namespace std;
+
+struct st{
+    string name,num;
+    int score;
+};
+
+bool cmp(st b,st c){
+    return b.score>c.score;
+}
+
+int main(){
+    int n;
+    cin>>n;
+    struct st a[n];
+    for(int i=0;i<n;i++)
+        cin>>a[i].name>>a[i].num>>a[i].score;
+    sort(a,a+n,cmp);
+    cout<<a[0].name<<" "<<a[0].num<<endl<<a[n-1].name<<" "<<a[n-1].num;
+    return 0;
+}
