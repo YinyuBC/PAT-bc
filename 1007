@@ -1,0 +1,31 @@
+#include<iostream>
+#include<cmath>
+#include<stack>
+using namespace std;
+
+bool isprime(int a){
+    for(int i=2;i<=sqrt(a);i++){
+        if(a%i==0) return false;
+    }
+    return true;
+}
+
+int main(){
+    int n,up,down,cont=0;
+    cin>>n;
+    stack<int> prime;
+    for(int i=2;i<=n;i++){
+        if(isprime(i)) prime.push(i);
+    }
+    
+    up=prime.top();
+    prime.pop();
+    while(prime.empty()==false){
+        down=prime.top();
+        prime.pop();
+        if(up-down==2) cont++;
+        up=down;
+    }
+    cout<<cont;
+	return 0;
+}
