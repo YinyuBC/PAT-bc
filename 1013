@@ -1,0 +1,31 @@
+#include<iostream>
+using namespace std;
+
+bool isprime(int a){
+    for(int i=2;i*i<=a;i++){
+        if(a%i==0) return false;
+    }
+    return true;
+}
+int main(){
+    int m,n,j,temp=1,flag=0;
+    cin>>m>>n;
+    for(j=0;j<m;){
+        temp++;
+        if(isprime(temp)==true) j++;
+    }
+
+    for(j=0;j<=n-m;){
+        if(isprime(temp)==true){
+            if(j%10==0){
+                if(flag==1) printf("\n");
+                flag=1;
+                printf("%d",temp);
+            }
+            else printf(" %d",temp);
+            j++;
+        }
+        temp++;
+    }
+    return 0;
+}
