@@ -1,0 +1,28 @@
+#include<iostream>
+#include<cctype>
+using namespace std;
+
+int main(){
+    string a,b,c,d;
+    cin>>a>>b>>c>>d;
+    int flag=1;
+    string DAY[7]={"MON","TUE","WED","THU","FRI","SAT","SUN"};
+    for(int i=0;i<a.size()&&i<b.size();i++){
+        if(a[i]==b[i]&&flag==1&&a[i]>='A'&&a[i]<='G'){
+            cout<<DAY[a[i]-'A']<<" ";
+            flag=0;
+            continue;
+        }
+        if(a[i]==b[i]&&flag==0&&(isdigit(a[i])||a[i]>='A'&&a[i]<='N')){
+            isdigit(a[i])? cout<<"0"<<a[i]:cout<<a[i]-'A'+10;
+            break;
+        }
+    }
+    for(int i=0;i<c.size()&&i<d.size();i++){
+        if(c[i]==d[i]&&isalpha(c[i])){
+            printf(":%02d",i);
+            break;
+        }
+    }
+    return 0;
+}
