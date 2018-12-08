@@ -1,0 +1,24 @@
+#include<iostream>
+#include<cctype>
+using namespace std;
+
+int main(){
+    int n,cnt=0;
+    cin>>n;
+    string id;
+    int weight[17]={7,9,10,5,8,4,2,1,6,3,7,9,10,5,8,4,2};
+    string M="10X98765432";
+    for(int i=0,j;i<n;i++){
+        cin>>id;
+        int Z=0;
+        for(j=0;j<17&&isdigit(id[j]);j++){
+            Z+=weight[j]*(id[j]-'0');
+        }
+        if(j<17||M[Z%11]!=id[17]){
+            cout<<id<<endl;
+            cnt++;
+        }
+    }
+    if(cnt==0) cout<<"All passed"<<endl;
+    return 0;
+}
