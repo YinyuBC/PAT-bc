@@ -1,0 +1,43 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <set>
+#include <unordered_set>
+using namespace std;
+int main() {
+	unordered_map<int, set<int>> samesexpy;
+	unordered_map<int, unordered_set<int>> diffsexpy;
+	int n, m, k;
+	cin >> n >> m;
+	for (int i = 0; i < m; i++) {
+		string a, b;
+		cin >> a >> b;
+		int u = abs(stoi(a)), v = abs(stoi(b));
+		if (a.length() == b.length()) {
+			samesexpy[u].insert(v);
+			samesexpy[v].insert(u);
+		}
+		else {
+			diffsexpy[u].insert(v);
+			diffsexpy[v].insert(u);
+		}
+	}
+	cin >> k;
+	for (int i = 0; i < k; i++) {
+		string a, b;
+		cin >> a >> b;
+		int u = abs(stoi(a)), v = abs(stoi(b));
+		vector<pair<int, int>> buffer; 
+		int cnt = 0;
+		for (auto x : samesexpy[u])
+			for (auto y : samesexpy[v])
+				if (diffsexpy[x].count(y) || (samesexpy[x].count(y) && x != v && y != u)) {
+					cnt++;
+					buffer.push_back({x, y});
+				}	
+		printf("%d\n", cnt);
+		for (auto it : buffer)
+			printf("%04d %04d\n", it.first, it.second);
+	}
+	return 0;
+}
