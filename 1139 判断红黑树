@@ -1,0 +1,48 @@
+#include <iostream>
+using namespace std;
+
+struct TreeNode {
+	int val;
+	TreeNode *left, *right;
+	TreeNode(int v) : val(v), left(nullptr), right(nullptr) {} 
+};
+
+TreeNode* create(TreeNode* root, int v) {
+	if (nullptr == root)
+		root = new TreeNode(v);
+	else if (abs(v) < abs(root->val))
+		root->left = create(root->left, v);
+	else
+		root->right = create(root->right, v);
+	return root; 
+}
+bool exist2red(TreeNode* root, int color = -1) {
+	if (nullptr == root) return false;
+	if (color < 0 && root->val < 0) return true;
+	return exist2red(root->left, root->val) || exist2red(root->right, root->val); 
+}
+
+pair<int, bool> isBalance(TreeNode* root) {
+	if (nullptr == root) return {1, true};
+	auto l = isBalance(root->left), r = isBalance(root->right);
+	int bk = (root->val > 0 ? 1 : 0) + max(l.first, r.first);
+	return {bk, l.first == r.first && l.second && r.second};
+}
+
+int main() {
+	int k, n, ver;
+	cin >> k;
+	for (int i = 0; i < k; i++) {
+		cin >> n;
+		TreeNode* root = nullptr;
+		for (int j = 0; j < n; j++) {
+			cin >> ver;
+			root = create(root, ver);
+		}
+		if (exist2red(root) || !isBalance(root).second)
+			printf("No\n");
+		else 
+			printf("Yes\n");
+	}
+	return 0;
+}
