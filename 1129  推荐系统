@@ -1,0 +1,58 @@
+#include <iostream>
+#include <queue>
+#define N 50010
+using namespace std;
+struct node {
+	int id, val;
+	bool operator < (const node& a) const {
+		return val != a.val ? val < a.val : id > a.id;
+	}
+	bool operator > (const node& a) const {
+		return val != a.val ? val > a.val : id < a.id;
+	}
+	
+	bool operator == (const node& a) const {
+		return val == a.val && id == a.id;
+	}
+};
+
+priority_queue<node> heap;
+priority_queue<node> del;
+void update() {
+	while (!del.empty() && !(heap.top() > del.top())) {
+		if (heap.top() == del.top()) {
+			heap.pop(); del.pop();
+		}
+		else if (heap.top() < del.top())
+			del.pop();
+	}
+}
+
+int his[N];
+int main() {
+	int n, k, item;
+	cin >> n >> k;
+	for (int i = 0; i < n; i++) {
+		cin >> item;
+		if (i != 0) {
+			printf("%d:", item);
+			int cnt = 0;
+			vector<node> buffer;
+			while(cnt < k) {
+				cnt++;
+				update();
+				if (heap.empty()) break;
+				node t = heap.top(); heap.pop();
+				printf(" %d", t.id);
+				buffer.push_back(t);
+			}
+			printf("\n");
+			for (auto it : buffer)
+				heap.push(it);
+		}
+		del.push({item, his[item]});
+		his[item]++;
+		heap.push({item, his[item]}); 
+	}
+	return 0;
+}
