@@ -1,0 +1,24 @@
+#include <iostream>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+	int m, n, s;
+	unordered_set<string> picked;
+	cin >> m >> n >> s; 
+	string id;
+	int cnt = n - (s - 1);
+	bool keepgo = true;
+	for (int i = 1; i <= m; i++) {
+		cin >> id;
+		if (cnt >= n && !picked.count(id)) {
+			keepgo = false;
+			cout << id << "\n";
+			picked.insert(id);
+			cnt = 1;
+		}
+		else cnt++;
+	}
+	if (keepgo) cout << "Keep going...\n";
+	return 0;
+}
