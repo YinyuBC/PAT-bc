@@ -1,0 +1,51 @@
+#include <iostream>
+#include <vector>
+#include <stack>
+#define N 510
+ 
+using namespace std;
+
+vector<int> adj[N];
+vector<int> vis(N);
+vector<int> father(N);
+
+int dfs(int u) {
+	int cnt = 0;
+	stack<int> stk;
+	vis[u] = 1;
+	stk.push(u);
+	while (!stk.empty()) {
+		int cur = stk.top(); stk.pop(); cnt++;
+		for (auto v : adj[cur])
+			if (vis[v] == 0) {
+				vis[v] = 1;
+				stk.push(v);
+			}
+	}
+	return cnt;
+}
+
+int main() {
+	int n, m;
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++)
+		father[i] = i;
+	int u, v;
+	for (int i = 0; i < m; i++) {
+		cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+	}
+	
+	int odd = 0;
+	for (int i = 1; i <= n; i++) {
+		printf("%d%s", adj[i].size(), i == n ? "\n" : " ");
+		if (adj[i].size() % 2) odd++;
+	}
+	
+	int cnt = dfs(1);
+	if (cnt == n && odd == 0) printf("Eulerian\n");
+	else if (cnt == n && odd == 2) printf("Semi-Eulerian\n");
+	else printf("Non-Eulerian\n");
+	return 0;
+}
