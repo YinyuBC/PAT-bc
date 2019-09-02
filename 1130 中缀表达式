@@ -1,0 +1,33 @@
+#include <iostream>
+using namespace std;
+
+struct node {
+	string data;
+	int l, r;
+}tr[25];
+
+void inOrder(int root, bool isroot = false) {
+	if (-1 == root) return;
+	int l = tr[root].l, r = tr[root].r;
+	bool flag = (l != -1 || r != -1) && !isroot;
+	if (flag) cout << "(";
+	inOrder(l);
+	cout << tr[root].data;
+	inOrder(r);
+	if (flag) cout << ")";
+} 
+
+int ischild[25];
+int main() {
+	int n;
+	cin >> n;
+	for (int i = 1; i <= n; i++) {
+		cin >> tr[i].data >> tr[i].l >> tr[i].r;
+		if (tr[i].l > 0) ischild[tr[i].l] = 1;
+		if (tr[i].r > 0) ischild[tr[i].r] = 1;
+	}
+	int root = 1;
+	while (ischild[root]) root++;
+	inOrder(root, true);
+	return 0;
+}
