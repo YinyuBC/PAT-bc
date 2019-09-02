@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <deque>
+#define N 35
+using namespace std;
+
+struct TreeNode {
+	int val;
+	TreeNode *left, *right;
+	TreeNode(int v) : val(v), left(nullptr), right(nullptr) {}
+};
+
+int in[N], post[N];
+unordered_map<int, int> pos;
+TreeNode* create(int pl, int pr, int il, int ir) {
+	if (pl == pr) return nullptr;
+	int val = post[pr - 1];
+	int proot = pos[val];
+	int len = proot - il;
+	TreeNode* root = new TreeNode(val);
+	root->left = create(pl, pl + len, il, proot);
+	root->right = create(pl + len, pr - 1, proot + 1, ir);
+	return root;
+}
+
+vector<int> zigzag(TreeNode* root) {
+	vector<int> res;
+	deque<TreeNode*> deq;
+	deq.push_back(root);
+	int level = 1;
+	while(!deq.empty()) {
+		for (int i = deq.size(); i > 0; i--) {
+			if (level % 2 == 1) {
+				TreeNode* cur = deq.back();
+				res.push_back(cur->val);
+				deq.pop_back();
+				if (cur->right) deq.push_front(cur->right);
+				if (cur->left) deq.push_front(cur->left);
+			}
+			if (level % 2 == 0) {
+				TreeNode* cur = deq.front();
+				res.push_back(cur->val);
+				deq.pop_front();
+				if (cur->left) deq.push_back(cur->left);
+				if (cur->right) deq.push_back(cur->right);
+			}
+		}
+		level++;
+	}
+	return res;
+}
+int main() {
+	vector<int> res;
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> in[i];
+		pos[in[i]] = i;
+	}
+	for (int i = 0; i < n; i++)
+		cin >> post[i];
+	
+	TreeNode* root = create(0, n, 0, n);
+	
+	res = zigzag(root);
+	for (int i = 0; i < n; i++) {
+		printf("%d%s", res[i], i == n - 1 ? "\n" : " ");
+	}
+	return 0;
+}
