@@ -1,0 +1,52 @@
+#include <iostream>
+#include <vector>
+#define N 510
+ 
+using namespace std;
+
+vector<int> adj[N];
+vector<int> father(N);
+
+int Find(int a) {
+	if (father[a] == a)
+		return a;
+	return father[a] = Find(father[a]);
+}
+void Union(int a, int b) {
+	int fa = Find(a);
+	int fb = Find(b);
+	father[fb] = fa;
+}
+int main() {
+	int n, m;
+	cin >> n >> m;
+	for (int i = 1; i <= n; i++)
+		father[i] = i;
+	int u, v;
+	for (int i = 0; i < m; i++) {
+		cin >> u >> v;
+		adj[u].push_back(v);
+		adj[v].push_back(u);
+		Union(u, v);
+	}
+
+	bool connect = true;
+	int father = Find(1);
+	for (int i = 1; i <= n; i++) {
+		if (Find(i) != father) {
+			connect = false;
+			break;
+		}
+	}
+	
+	int odd = 0;
+	for (int i = 1; i <= n; i++) {
+		printf("%d%s", adj[i].size(), i == n ? "\n" : " ");
+		if (adj[i].size() % 2) odd++;
+	}
+	
+	if (connect && odd == 0) printf("Eulerian\n");
+	else if (connect && odd == 2) printf("Semi-Eulerian\n");
+	else printf("Non-Eulerian\n");
+	return 0;
+}
