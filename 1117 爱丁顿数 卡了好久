@@ -1,0 +1,20 @@
+#include <iostream>
+#include <algorithm>
+
+#define N 100010
+using namespace std;
+
+int mile[N];
+int main() {
+	int n;
+	cin >> n;
+	for (int i = 1; i <= n; i++)
+		cin >> mile[i];
+	
+	sort(mile + 1, mile + n + 1, greater<int>());
+
+	int cnt = n;
+	while(cnt && !(mile[cnt] > cnt)) cnt--;
+	printf("%d\n", cnt);
+	return 0;
+}
