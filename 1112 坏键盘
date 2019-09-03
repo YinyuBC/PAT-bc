@@ -1,0 +1,28 @@
+#include <iostream>
+#include <unordered_set>
+using namespace std;
+
+int main() {
+	unordered_set<char> goodkey;
+	int k;
+	cin >> k;
+	string str;
+	cin >> str;
+	for (int i = 0, j = 0; i < str.size(); i = j) {
+		while (j < str.size() && str[i] == str[j]) j++;
+		if ((j - i) % k != 0) goodkey.insert(str[i]);
+	}
+	
+	string res, badkey;
+	for (int i = 0; i < str.size();) {
+		res += str[i];
+		if (goodkey.count(str[i])) i++;
+		else {
+			if (badkey.find(str[i]) == badkey.npos) badkey += str[i];
+			i += k;
+		}
+	}	
+	cout << badkey << "\n";
+	cout << res << "\n"; 
+	return 0;
+}
