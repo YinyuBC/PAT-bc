@@ -1,0 +1,64 @@
+#include <iostream>
+#include <queue>
+#define N 1010
+using namespace std;
+
+struct TreeNode {
+	int val;
+	TreeNode *left, *right;
+	TreeNode (int v) : val(v), left(nullptr), right(nullptr) {} 
+};
+
+void insert(TreeNode* & root, int v) {
+	if (nullptr == root) {
+		root = new TreeNode(v);
+		return;
+	}
+	
+	if (v <= root->val) 
+		insert(root->left, v);
+	else
+		insert(root->right, v);	
+}
+
+TreeNode* create(int data[], int n) {
+	TreeNode* root = nullptr;
+	for (int i = 0; i < n; i++) {
+		insert(root, data[i]);
+	}
+	return root;
+} 
+
+pair<int, int> levelOrder(TreeNode* root) {
+	int n1 = 0, n2;
+	queue<TreeNode*> q;
+	if (root) q.push(root);
+	while (!q.empty()) {
+		n2 = n1;
+		n1 = q.size();
+		for (int k = n1; k--; k > 0) {
+			TreeNode* cur = q.front();
+			q.pop();
+			if (cur->left) q.push(cur->left);
+			if (cur->right) q.push(cur->right);
+		}
+	} 
+	return {n1, n2};
+} 
+
+int data[N];
+int main() {
+	int n;
+	cin >> n;
+	for (int i = 0; i < n; i++) {
+		cin >> data[i];
+	}
+	
+	TreeNode* root = create(data, n);
+	pair<int, int> res = levelOrder(root);
+	
+	int n1 = res.first, n2 = res.second;
+
+	printf("%d + %d = %d\n", n1, n2, n1 + n2);
+	return 0;
+}
