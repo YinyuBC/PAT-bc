@@ -1,0 +1,91 @@
+#include <iostream>
+#include <vector>
+#include <unordered_map>
+#include <unordered_set>
+#include <algorithm>
+using namespace std;
+
+struct person {
+	int id, size;
+	double num, area;
+	person(int id, int size, double num, double area) : id(id), size(size), num(num), area(area) {}
+};
+
+unordered_map<int, person*> direc;
+unordered_map<int, int> father;
+
+int Find (int a) {
+	if (father[a] == a)
+		return a;
+	return father[a] = Find(father[a]);
+} 
+
+void Union (int a, int b) {
+	int fa = Find(a), fb = Find(b);
+	if (fa != fb) {
+		if (fa > fb) swap(fa, fb);
+		father[fb] = fa;
+		direc[fa]->size += direc[fb]->size;
+		direc[fa]->num += direc[fb]->num;
+		direc[fa]->area += direc[fb]->area;
+	}
+}
+
+bool cmp(person* a, person* b) {
+	if (a->area != b->area) return a->area > b->area;
+	return a->id < b->id;
+}
+
+int main() {
+	int n;
+	cin >> n;
+	unordered_map<int, vector<int>> adj;
+	unordered_set<int> se;
+	int id, fa, ma, k, child;
+	for (int i = 0; i < n; i++) {
+		cin >> id >> fa >> ma;
+		if (fa != -1) adj[id].push_back(fa);
+		if (ma != -1) adj[id].push_back(ma);
+		cin >> k;
+		for (int j = 0; j < k; j++) {
+			cin >> child;
+			adj[id].push_back(child);
+		}
+		double num, area;
+		cin >> num >> area;
+		
+		se.insert(id);
+		father[id] = id;
+		direc[id] = new person(id, 1, num, area); 
+	}
+	for (auto it : adj) {
+		int u = it.first;
+		for (auto v : adj[u]) {
+			if (!se.count(v)) {	
+				se.insert(v);
+				father[v] = v; 
+				direc[v] = new person(v, 1, 0, 0);
+			}
+			Union(u, v);
+		}
+	}
+	vector<person*> res;
+	for (auto it : father) {
+		if (Find(it.first) == it.first) {
+			res.push_back(direc[it.first]);
+		}
+	}
+	
+	for (auto it : res) {
+		it->num = it->num / it->size;
+		it->area = it->area / it->size;
+	}
+	
+	sort(res.begin(), res.end(), cmp);
+	
+	cout << res.size() << "\n";
+	for (auto it : res) {
+		printf("%04d %d %.3f %.3f\n", it->id, it->size, it->num, it->area);
+	}
+	return 0;
+}
