@@ -1,0 +1,138 @@
+#include <iostream>
+#include <vector>
+#include <queue>
+#define MAXV 510
+#define INF 0x3f3f3f3f
+using namespace std;
+
+struct edge {
+	int _v, _len, _time;
+	edge (int v, int len, int time) : _v(v), _len(len), _time(time) {}
+};
+
+struct node {
+	int _u, _val;
+	node (int u, int val) : _u(u), _val(val) {}
+	bool operator < (const node& a) const {
+		return _val > a._val;
+	}
+};
+
+int n;
+vector<edge> adj[MAXV];
+
+int dis[MAXV], t[MAXV], pre[MAXV];
+bool vis[MAXV];
+ 
+void dijkstra_dis(int s) {
+	fill(dis, dis + n, INF);
+	fill(t, t + n, INF);
+	for (int i = 0; i < n; i++) {
+		pre[i] = i;
+	}
+	dis[s] = 0; t[s] = 0;
+
+	priority_queue<node> heap;
+	heap.push(node(s, 0));
+	while (!heap.empty()) {
+		node cur = heap.top(); heap.pop();
+		
+		int u = cur._u;
+		if (vis[u]) continue;
+		vis[u] = true;
+		
+		for (auto e : adj[u]) {
+			int v = e._v, len = e._len, time = e._time;
+			if (!vis[v] && dis[v] > dis[u] + len) {
+				dis[v] = dis[u] + len;
+				t[v] = t[u] + time;
+				pre[v] = u;
+				heap.push(node(v, dis[v]));
+			}
+			else if (!vis[v] && dis[v] == dis[u] + len && t[v] > t[u] + time) {
+				t[v] = t[u] + time;
+				pre[v] = u;
+			}
+		}
+	}
+}
+
+int hop[MAXV];
+void dijkstra_t(int s) {
+	fill(vis, vis + n, false);
+	fill(t, t + n, INF);
+	fill(hop, hop + n, INF);
+	for (int i = 0; i < n; i++) 
+		pre[i] = i;
+	hop[s] = 1; t[s] = 0;
+	
+	priority_queue<node> heap;
+	heap.push(node(s, 0)); 
+	while(!heap.empty()) {
+		node cur = heap.top(); heap.pop();
+		
+		int u = cur._u;
+		if (vis[u]) continue;
+		vis[u] = true;
+		
+		for (auto e : adj[u]) {
+			int v = e._v, time = e._time;
+			if (!vis[v] && t[v] > t[u] + time) {
+				t[v] = t[u] + time;
+				hop[v] = hop[u] + 1;
+				pre[v] = u;
+				heap.push(node(v, t[v]));
+			}
+			else if (!vis[v] && t[v] == t[u] + time && hop[v] > hop[u] + 1) {
+				hop[v] = hop[u] + 1;
+				pre[v] = u;
+			}
+		}
+	}
+}
+
+void dfs(int s, vector<int>& res) {
+	if (pre[s] == s) {
+		res.push_back(s);
+	}
+	else {
+		dfs(pre[s], res);
+		res.push_back(s);
+	}
+} 
+
+int main() {
+	int m;
+	cin >> n >> m;
+	int v1, v2, len, time;
+	bool one_way;
+	for (int i = 0; i < m; i++) {
+		cin >> v1 >> v2 >> one_way >> len >> time;
+		adj[v1].push_back(edge(v2, len, time));
+		if (!one_way) adj[v2].push_back(edge(v1, len, time));
+	}
+	int s, des;
+	cin >> s >> des;
+	dijkstra_dis(s);
+	vector<int> res_dis;
+	dfs(des, res_dis);
+	
+	dijkstra_t(s);
+	vector<int> res_t;
+	dfs(des, res_t);
+	if (res_dis != res_t) {
+		printf("Distance = %d: ", dis[des]);
+		for (auto it : res_dis) 
+			printf("%d%s", it, it == res_dis.back() ? "\n" : " -> ");
+		printf("Time = %d: ", t[des]);
+		for (auto it : res_t) 
+			printf("%d%s", it, it == res_dis.back() ? "\n" : " -> "); 
+	}
+	else {
+		printf("Distance = %d; Time = %d: ", dis[des], t[des]);
+		for (auto it : res_dis) 
+			printf("%d%s", it, it == res_dis.back() ? "\n" : " -> ");
+	}
+
+	return 0;
+}
