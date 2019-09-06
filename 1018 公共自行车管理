@@ -1,0 +1,99 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+#define N 510
+#define INF 0x3f3f3f3f
+using namespace std;
+
+struct edge {
+	int _v, _time;
+	edge(int v, int time) : _v(v), _time(time) {}
+};
+
+int cmax, n, des, m;
+int val[N];
+vector<edge> adj[N];
+
+int t[N];
+bool vis[N];
+vector<int> pre[N];
+void dijkstra() {
+	fill(t, t + n + 1, INF);
+	t[0] = 0;
+	for (int i = 0; i <= n; i++) {
+		int u = -1, MIN = INF; 
+		for (int j = 0; j <= n; j++) {
+			if (!vis[j] && t[j] < MIN) {
+				MIN = t[j];
+				u = j;
+			}
+		}
+		
+		if (-1 == u) return;
+		vis[u] = true;
+		
+		for (auto e : adj[u]) {
+			int v = e._v, time = e._time;
+			if (!vis[v] && t[v] > t[u] + time) {
+				t[v] = t[u] + time;
+				pre[v].clear();
+				pre[v].push_back(u); 
+			}
+			else if (!vis[v] && t[v] == t[u] + time) {
+				pre[v].push_back(u);
+			}
+		}
+	}
+}
+
+int opt_send = INF, opt_back = INF;
+vector<int> tmpPath, Path;
+void dfs(int v) {
+	if (v == 0) {
+		tmpPath.push_back(v);
+		
+		int send = 0, sum = 0;
+		for (int i = tmpPath.size() - 1; i >= 0; i--) {
+			sum += val[tmpPath[i]];
+			if (sum < 0) {
+				send += -sum;
+				sum = 0;
+			}
+		}
+		
+		if (send < opt_send || (send == opt_send && sum < opt_back)) {
+			opt_send = send;
+			opt_back = sum;
+			Path = tmpPath;
+		}
+	
+		tmpPath.pop_back();
+		return;
+	}
+	tmpPath.push_back(v);
+	for (auto u : pre[v])
+		dfs(u);
+	tmpPath.pop_back();
+}
+
+int main() {
+	cin >> cmax >> n >> des >> m;
+	for (int i = 1; i <= n; i++) {
+		cin >> val[i];
+		val[i] -= cmax / 2;
+	}
+	int u, v, t;
+	for (int i = 0; i < m; i++) {
+		cin >> u >> v >> t;
+		adj[u].push_back(edge(v, t));
+		adj[v].push_back(edge(u, t));
+	}
+	dijkstra();
+	dfs(des);
+	printf("%d ", opt_send);
+	reverse(Path.begin(), Path.end());
+	for (auto sta : Path)
+		printf("%d%s", sta, sta == Path.back() ? " " : "->");
+	printf("%d\n", opt_back);  
+	return 0;
+}
